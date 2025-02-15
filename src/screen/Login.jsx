@@ -19,8 +19,33 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    fetchCommits(formData.github_repo_owner,formData.github_repo_name);
     console.log(formData);
   };
+
+  const fetchCommits = async (owner, repo) => {
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/commits`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/vnd.github.v3+json",
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error(`GitHub API Error: ${response.statusText}`);
+      }
+  
+      const commits = await response.json();
+      console.log("Commits:", commits);
+    } catch (error) {
+      console.error("Error fetching commits:", error);
+    }
+  };
+  
   return (
     <>
       <div className="header_login flex justify-center h-fit w-screen">
@@ -32,7 +57,9 @@ function Login() {
           className="flex flex-col items-center h-fit w-screen"
         >
           <div className="flex flex-row justify-center items-center py-5">
-            <label className="font-medium whitespace-nowrap mr-2.5 w-60">Github Owner Name:</label>
+            <label className="font-medium whitespace-nowrap mr-2.5 w-60">
+              Github Owner Name:
+            </label>
             <input
               type="text"
               name="github_repo_owner"
@@ -43,7 +70,9 @@ function Login() {
             />
           </div>
           <div className="flex flex-row items-center py-5">
-            <label className="font-medium whitespace-nowrap mr-2.5 w-60">Github Repo Name:</label>
+            <label className="font-medium whitespace-nowrap mr-2.5 w-60">
+              Github Repo Name:
+            </label>
             <input
               type="text"
               name="github_repo_name"
@@ -54,7 +83,9 @@ function Login() {
             />
           </div>
           <div className="flex flex-row items-center py-5">
-            <label className="font-medium whitespace-nowrap mr-2.5 w-60">Twitter Consumer Key:</label>
+            <label className="font-medium whitespace-nowrap mr-2.5 w-60">
+              Twitter Consumer Key:
+            </label>
             <input
               type="text"
               name="twitter_consumer_key"
@@ -65,7 +96,9 @@ function Login() {
             />
           </div>
           <div className="flex flex-row items-center py-5">
-            <label className="font-medium whitespace-nowrap mr-2.5 w-60">Twitter Consumer Secret:</label>
+            <label className="font-medium whitespace-nowrap mr-2.5 w-60">
+              Twitter Consumer Secret:
+            </label>
             <input
               type="text"
               name="twitter_consumer_secret"
@@ -76,7 +109,9 @@ function Login() {
             />
           </div>
           <div className="flex flex-row items-center py-5">
-            <label className="font-medium whitespace-nowrap mr-2.5 w-60">Twitter Access Token:</label>
+            <label className="font-medium whitespace-nowrap mr-2.5 w-60">
+              Twitter Access Token:
+            </label>
             <input
               type="text"
               name="twitter_access_token"
@@ -87,7 +122,9 @@ function Login() {
             />
           </div>
           <div className="flex flex-row items-center py-5">
-            <label className="font-medium whitespace-nowrap mr-2.5 w-60">Twitter Access Token Secret:</label>
+            <label className="font-medium whitespace-nowrap mr-2.5 w-60">
+              Twitter Access Token Secret:
+            </label>
             <input
               type="text"
               name="twitter_access_token_secret"
@@ -98,7 +135,9 @@ function Login() {
             />
           </div>
           <div className="flex flex-row items-center py-5">
-            <label className="font-medium whitespace-nowrap mr-2.5 w-60">Gemini API Key:</label>
+            <label className="font-medium whitespace-nowrap mr-2.5 w-60">
+              Gemini API Key:
+            </label>
             <input
               type="text"
               name="gemini_api_key"
@@ -108,6 +147,12 @@ function Login() {
               required
             />
           </div>
+          <button
+            type="submit"
+            className="relative z-10 inline-flex items-center justify-center w-full px-8 py-3 text-lg text-white transition-all duration-200 bg-gray-900 border-2 border-transparent sm:w-auto rounded-xl font-pj hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+          >
+            Submit
+          </button>
         </form>
       </div>
     </>
