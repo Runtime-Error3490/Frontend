@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@font-face {
+    font-family: 'Glory';
+    src: url(/src/assets/fonts/glorify-sh/glorify-sh/Glorify\ SH\ Demo.ttf);
+}
+.header_login{
+    font-family: 'Glory';
+}
