@@ -21,7 +21,7 @@ function Login() {
   const postToTwitter = async (tweetText) => {
     console.log("tweetText", tweetText);
     try {
-      const response = await axios.post("http://localhost:3001/tweet", {
+      const response = await axios.post("https://server-njdl.onrender.com/tweet", {
         twitter_consumer_key: formData.twitter_consumer_key,
         twitter_consumer_secret: formData.twitter_consumer_secret,
         accessToken: formData.twitter_access_token,
@@ -55,7 +55,7 @@ function Login() {
     console.log("commitMesasges", commitMessages);
     const GEMINI_API_KEY = formData.gemini_api_key;
     try {
-      const response = await fetch("http://localhost:3001/generate-summary", {
+      const response = await fetch("https://server-njdl.onrender.com/generate-summary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ GEMINI_API_KEY, commitMessages }),
