@@ -12,6 +12,10 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.6",
     "@tailwindcss/vite": "^4.0.6",
+    "axios": "^1.7.9",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.2.0",
+    "oauth-1.0a": "^2.2.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-
+import OAuth from "oauth-1.0a";
+import CryptoJS from "crypto-js";
+import axios from "axios";
 function Login() {
   const [formData, setFormData] = useState({
     github_repo_owner: "",
@@ -16,11 +18,60 @@ function Login() {
       [e.target.name]: e.target.value,
     });
   };
+  const postToTwitter = async (tweetText) => {
+    console.log("tweetText", tweetText);
+    try {
+      const response = await axios.post("http://localhost:3001/tweet", {
+        twitter_consumer_key: formData.twitter_consumer_key,
+        twitter_consumer_secret: formData.twitter_consumer_secret,
+        accessToken: formData.twitter_access_token,
+        accessTokenSecret: formData.twitter_access_token_secret,
+        tweetText: tweetText,
+      });
 
-  const handleSubmit = (e) => {
+      console.log("Tweet posted successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error posting tweet:",
+        error.response?.data || error.message
+      );
+      return "Failed to post tweet.";
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    fetchCommits(formData.github_repo_owner,formData.github_repo_name);
-    console.log(formData);
+    const commitMessages = await fetchCommits(
+      formData.github_repo_owner,
+      formData.github_repo_name
+    );
+    const geminiMessaage = await fetchGeminiSummary(await commitMessages.join("\n"));
+    const postTwitterData= await postToTwitter(geminiMessaage);
+    console.log("postTwitterData", postTwitterData);
+  };
+
+  const fetchGeminiSummary = async (commitMessages) => {
+    console.log("commitMesasges", commitMessages);
+    const GEMINI_API_KEY = formData.gemini_api_key;
+    try {
+      const response = await fetch("http://localhost:3001/generate-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ GEMINI_API_KEY, commitMessages }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Backend Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Gemini API Summary:", data.summary);
+      return data.summary;
+    } catch (error) {
+      console.error("Error fetching summary from backend:", error);
+      return "Could not generate summary.";
+    }
   };
 
   const fetchCommits = async (owner, repo) => {
@@ -34,18 +85,19 @@ function Login() {
           },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error(`GitHub API Error: ${response.statusText}`);
       }
-  
+
       const commits = await response.json();
-      console.log("Commits:", commits);
+      const commitMessages = commits.map((commit) => commit.commit.message);
+      return commitMessages;
     } catch (error) {
       console.error("Error fetching commits:", error);
     }
   };
-  
+
   return (
     <>
       <div className="header_login flex justify-center h-fit w-screen">
